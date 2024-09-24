@@ -51,18 +51,19 @@ class _MyAppState extends State<MyApp> {
     // Get the FCM token and print it
     messaging.getToken().then((String? token) {
       assert(token != null);
-      print("FCM Token: $token"); // Use this token in your Node.js backend to send push notifications
+      print(
+          "FCM Token: $token"); // Use this token in your Node.js backend to send push notifications
     });
-
     // Listen for incoming messages (foreground)
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("Received a message while in the foreground!");
-
       if (message.notification != null) {
-        _showNotification(
-          message.notification!.title ?? "No Title",
-          message.notification!.body ?? "No Body"
-        );
+        _showNotification(message.notification!.title ?? "No Title",
+            message.notification!.body ?? "No Body");
+      }
+
+      if (message.data.isNotEmpty) {
+        final data = message.data;
+        print('Data: $data'); // This line prints the entire data payload
       }
     });
   }
@@ -126,3 +127,33 @@ class _MyAppState extends State<MyApp> {
 extension on RemoteNotification {
   get pageno => null;
 }
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
+
+//   const AndroidNotificationChannel channel = AndroidNotificationChannel(
+//     id: 'your_channel_id',
+//     name: 'Your Notification Channel',
+//     importance: Importance.high,
+//   );
+
+//   await FirebaseMessaging.instance.requestPermission(
+//     alert: true,
+//     badge: true,
+//     sound: true,
+//   );
+
+//   await FirebaseMessaging.instance.setForegroundNotificationHandler(
+//     (message) async {
+//       if (message.data['screen'] != null) {
+//         // Handle opening the specific screen
+//         Navigator.pushNamed(context, message.data['screen']);
+//       }
+//     },
+//   );
+// }
